@@ -1,5 +1,5 @@
-import typing as tp
 import math
+import typing as tp
 
 
 operations_order = {0: ("^y",), 1: ("/", "*"), 2: ("+", "-")}
