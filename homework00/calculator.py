@@ -177,7 +177,7 @@ def solve(string_eq: str) -> tp.Union[float, str]:
                 return calculate(op, 0.0, float(inner_2)) if op == "-" else calculate(op, float(inner_2))
             if is_float(inner_1) and is_float(inner_2):
                 return calculate(op, float(inner_1), float(inner_2))
-            return inner_1 if inner_2.isspace() else inner_2
+            return inner_1 if float(inner_2.isspace()) else inner_2
 
 
 if __name__ == "__main__":
