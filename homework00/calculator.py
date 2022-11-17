@@ -1,7 +1,6 @@
 import math
 import typing as tp
 
-
 operations_order = {0: ("^y",), 1: ("/", "*"), 2: ("+", "-")}
 
 
@@ -121,11 +120,11 @@ def calc_order(order, chain: tp.List[tp.Union[str, float]]):
     """Вычисление операций текущего порядка"""
     for j, operator in enumerate(order):
         if operator[0] == len(chain) - 2:
-            chain[operator[0] - 1:] = [calc(operator[1], chain[operator[0] - 1], chain[operator[0] + 1])]
+            chain[operator[0] - 1 :] = [calc(operator[1], chain[operator[0] - 1], chain[operator[0] + 1])]
         else:
             if j != len(order) - 1:
                 order[j + 1][0] -= (j + 1) * 2
-            chain[operator[0] - 1: operator[0] + 2] = [
+            chain[operator[0] - 1 : operator[0] + 2] = [
                 calc(operator[1], chain[operator[0] - 1], chain[operator[0] + 1])
             ]
     return chain
@@ -161,7 +160,7 @@ def solve_brackets(chain):
 
     ob = chain.rfind("(")
     cb = chain.find(")")
-    chain = chain[:ob] + str(round(solve_chain_wt_brackets(chain[ob + 1: cb]), 2)) + chain[cb + 1:]
+    chain = chain[:ob] + str(round(solve_chain_wt_brackets(chain[ob + 1 : cb]), 2)) + chain[cb + 1 :]
     return solve_brackets(chain)
 
 
