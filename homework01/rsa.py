@@ -12,8 +12,18 @@ def is_prime(n: int) -> bool:
     >>> is_prime(8)
     False
     """
-    # PUT YOUR CODE HERE
-    pass
+
+    flag = True
+    d = 2
+    while d**2 <= n:
+        if n % d == 0:
+            flag = False
+            break
+        d += 1
+    if flag and n >= 2:
+        return True
+    else:
+        return False
 
 
 def gcd(a: int, b: int) -> int:
@@ -21,11 +31,16 @@ def gcd(a: int, b: int) -> int:
     Euclid's algorithm for determining the greatest common divisor.
     >>> gcd(12, 15)
     3
-    >>> gcd(3, 7)
+    >>> gcd(1, 7)
     1
     """
-    # PUT YOUR CODE HERE
-    pass
+
+    while a != 0 and b != 0:
+        if a > b:
+            a, b = b, a % b
+        else:
+            b, a = a, b % a
+    return a + b
 
 
 def multiplicative_inverse(e: int, phi: int) -> int:
@@ -35,26 +50,36 @@ def multiplicative_inverse(e: int, phi: int) -> int:
     >>> multiplicative_inverse(7, 40)
     23
     """
-    # PUT YOUR CODE HERE
-    pass
+    stak = []
+    x = 0
+    y = 1
+    if e > phi:
+        a = e
+        b = phi
+    else:
+        b = e
+        a = phi
+    while b != 0:
+        stak.append((a // b))
+        a, b = b, a % b
+    for i in range(len(stak) - 2, -1, -1):
+        x, y = y, x - y * stak[i]
+    d = y % phi
+    return d
 
 
-def generate_keypair(p: int, q: int) -> tp.Tuple[tp.Tuple[int, int], tp.Tuple[int, int]]:
+def generate_keypair(
+    p: int, q: int
+) -> tp.Tuple[tp.Tuple[int, int], tp.Tuple[int, int]]:
     if not (is_prime(p) and is_prime(q)):
         raise ValueError("Both numbers must be prime.")
     elif p == q:
         raise ValueError("p and q cannot be equal")
 
-    # n = pq
-    # PUT YOUR CODE HERE
-
-    # phi = (p-1)(q-1)
-    # PUT YOUR CODE HERE
-
-    # Choose an integer e such that e and phi(n) are coprime
+    n = p * q
+    phi = (p - 1) * (q - 1)
     e = random.randrange(1, phi)
 
-    # Use Euclid's Algorithm to verify that e and phi(n) are coprime
     g = gcd(e, phi)
     while g != 1:
         e = random.randrange(1, phi)
@@ -82,7 +107,7 @@ def decrypt(pk: tp.Tuple[int, int], ciphertext: tp.List[int]) -> str:
     # Unpack the key into its components
     key, n = pk
     # Generate the plaintext based on the ciphertext and key using a^b mod m
-    plain = [chr((char ** key) % n) for char in ciphertext]
+    plain = [chr((char**key) % n) for char in ciphertext]
     # Return the array of bytes as a string
     return "".join(plain)
 
