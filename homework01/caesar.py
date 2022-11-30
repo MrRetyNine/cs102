@@ -12,20 +12,17 @@ def encrypt_caesar(plaintext: str, shift: int = 3) -> str:
     """
     ciphertext = ""
     for c in plaintext:
-        if c.isupper():  # проверить, является ли символ прописным
+        if c.isupper():
             c_index = ord(c) - ord("A")
-            # сдвиг текущего символа на позицию key
             c_shifted = (c_index + shift) % 26 + ord("A")
             c_new = chr(c_shifted)
             ciphertext += c_new
-        elif c.islower():  # проверка наличия символа в нижнем регистре
-            # вычесть юникод 'a', чтобы получить индекс в диапазоне [0-25)
+        elif c.islower():
             c_index = ord(c) - ord("a")
             c_shifted = (c_index + shift) % 26 + ord("a")
             c_new = chr(c_shifted)
             ciphertext += c_new
         else:
-            # если нет алфавита, оставьте все как есть
             ciphertext += c
     return ciphertext
 
