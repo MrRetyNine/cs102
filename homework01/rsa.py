@@ -13,14 +13,13 @@ def is_prime(n: int) -> bool:
     False
     """
 
-    flag = True
     d = 2
-    while d**2 <= n:
+    while d ** 2 <= n:
         if n % d == 0:
-            flag = False
+            return False
             break
         d += 1
-    if flag and n >= 2:
+    if n >= 2:
         return True
     else:
         return False
@@ -64,8 +63,7 @@ def multiplicative_inverse(e: int, phi: int) -> int:
         a, b = b, a % b
     for i in range(len(stak) - 2, -1, -1):
         x, y = y, x - y * stak[i]
-    d = y % phi
-    return d
+    return y % phi
 
 
 def generate_keypair(p: int, q: int) -> tp.Tuple[tp.Tuple[int, int], tp.Tuple[int, int]]:
@@ -105,7 +103,7 @@ def decrypt(pk: tp.Tuple[int, int], ciphertext: tp.List[int]) -> str:
     # Unpack the key into its components
     key, n = pk
     # Generate the plaintext based on the ciphertext and key using a^b mod m
-    plain = [chr((char**key) % n) for char in ciphertext]
+    plain = [chr((char ** key) % n) for char in ciphertext]
     # Return the array of bytes as a string
     return "".join(plain)
 

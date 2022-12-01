@@ -13,15 +13,15 @@ def encrypt_vigenere(plaintext: str, keyword: str) -> str:
     while len(key) < len(plaintext):
         key += keyword
     for i in range(len(plaintext)):
-        if ord("A") <= ord(plaintext[i]) <= ord("Z"):
-            x_lol = (ord(plaintext[i]) + ord(key[i])) % 26
-            x_lol += ord("A")
-        elif ord("a") <= ord(plaintext[i]) <= ord("z"):
-            x_lol = (ord(plaintext[i]) + ord(key[i]) - 2 * ord("a")) % 26
-            x_lol += ord("a")
+        if "A" <= plaintext[i] <= "Z":
+            x = (ord(plaintext[i]) + ord(key[i])) % 26
+            x += ord("A")
+        elif "a" <= plaintext[i] <= "z":
+            x = (ord(plaintext[i]) + ord(key[i]) - 2 * ord("a")) % 26
+            x += ord("a")
         else:
-            x_lol = ord(plaintext[i])
-        ciphertext = str(ciphertext) + str(chr(x_lol))
+            x = ord(plaintext[i])
+        ciphertext = str(ciphertext) + str(chr(x))
     return ciphertext
 
 
@@ -40,12 +40,12 @@ def decrypt_vigenere(ciphertext: str, keyword: str) -> str:
     while len(key) < len(ciphertext):
         key += keyword
     for i in range(len(ciphertext)):
-        x_lol = (ord(ciphertext[i]) - ord(key[i]) + 26) % 26
-        if ord("A") <= ord(ciphertext[i]) <= ord("Z"):
-            x_lol += ord("A")
-        elif ord("a") <= ord(ciphertext[i]) <= ord("z"):
-            x_lol += ord("a")
+        x = (ord(ciphertext[i]) - ord(key[i]) + 26) % 26
+        if "A" <= ciphertext[i] <= "Z":
+            x += ord("A")
+        elif "a" <= ciphertext[i] <= "z":
+            x += ord("a")
         else:
-            x_lol = ord(ciphertext[i])
-        plaintext = str(plaintext) + str(chr(x_lol))
+            x = ord(ciphertext[i])
+        plaintext = str(plaintext) + str(chr(x))
     return plaintext
