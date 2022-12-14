@@ -1,5 +1,8 @@
 import pathlib
 import typing as tp
+import random as random
+import multiprocessing
+import time
 
 T = tp.TypeVar("T")
 
@@ -41,6 +44,10 @@ def group(values: tp.List[T], n: int) -> tp.List[tp.List[T]]:
     >>> group([1,2,3,4,5,6,7,8,9], 3)
     [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
     """
+    result = []
+    for val in range(0, len(values) - 1, n):
+        result.append(values[val: val + n])
+    return result
     pass
 
 
@@ -53,7 +60,7 @@ def get_row(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -> tp.List[str
     >>> get_row([['1', '2', '3'], ['4', '5', '6'], ['.', '8', '9']], (2, 0))
     ['.', '8', '9']
     """
-    pass
+    return grid[pos[0]]
 
 
 def get_col(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -> tp.List[str]:
@@ -65,7 +72,10 @@ def get_col(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -> tp.List[str
     >>> get_col([['1', '2', '3'], ['4', '5', '6'], ['.', '8', '9']], (0, 2))
     ['3', '6', '9']
     """
-    pass
+    result = []
+    for column in grid:
+        result.append(column[pos[1]])
+    return result
 
 
 def get_block(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -> tp.List[str]:
@@ -78,7 +88,11 @@ def get_block(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -> tp.List[s
     >>> get_block(grid, (8, 8))
     ['2', '8', '.', '.', '.', '5', '.', '7', '9']
     """
-    pass
+    block_values = []
+    for column in range((pos[0] // 3) * 3, (pos[0] // 3) * 3 + 3):
+        for row in range((pos[1] // 3) * 3, (pos[1] // 3) * 3 + 3):
+            block_values.append(grid[column][row])
+    return block_values
 
 
 def find_empty_positions(grid: tp.List[tp.List[str]]) -> tp.Optional[tp.Tuple[int, int]]:
@@ -90,7 +104,11 @@ def find_empty_positions(grid: tp.List[tp.List[str]]) -> tp.Optional[tp.Tuple[in
     >>> find_empty_positions([['1', '2', '3'], ['4', '5', '6'], ['.', '8', '9']])
     (2, 0)
     """
-    pass
+    for row in range(len(grid)):
+        for column in grid[row]:
+            if column == ".":
+                return row, grid[row].index(column)
+    return None
 
 
 def find_possible_values(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -> tp.Set[str]:
@@ -103,7 +121,11 @@ def find_possible_values(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -
     >>> values == {'2', '5', '9'}
     True
     """
-    pass
+    static_set = set("123456789")
+    row_set = set(get_row(grid, pos))
+    col_set = set(get_col(grid, pos))
+    block_set = set(get_block(grid, pos))
+    return static_set - row_set - block_set - col_set
 
 
 def solve(grid: tp.List[tp.List[str]]) -> tp.Optional[tp.List[tp.List[str]]]:
@@ -118,13 +140,33 @@ def solve(grid: tp.List[tp.List[str]]) -> tp.Optional[tp.List[tp.List[str]]]:
     >>> solve(grid)
     [['5', '3', '4', '6', '7', '8', '9', '1', '2'], ['6', '7', '2', '1', '9', '5', '3', '4', '8'], ['1', '9', '8', '3', '4', '2', '5', '6', '7'], ['8', '5', '9', '7', '6', '1', '4', '2', '3'], ['4', '2', '6', '8', '5', '3', '7', '9', '1'], ['7', '1', '3', '9', '2', '4', '8', '5', '6'], ['9', '6', '1', '5', '3', '7', '2', '8', '4'], ['2', '8', '7', '4', '1', '9', '6', '3', '5'], ['3', '4', '5', '2', '8', '6', '1', '7', '9']]
     """
-    pass
+    pos = find_empty_positions(grid)
+    if pos is None:
+        return grid
+    row, col = pos
+    for value in find_possible_values(grid, pos):
+        grid[row][col] = value
+        solved_sudoku = solve(grid)
+        if solved_sudoku is not None:
+            return solved_sudoku
+        grid[row][col] = "."
+    return None
 
 
 def check_solution(solution: tp.List[tp.List[str]]) -> bool:
     """ Если решение solution верно, то вернуть True, в противном случае False """
     # TODO: Add doctests with bad puzzles
-    pass
+    for row in range(len(solution)):
+        if set(get_row(solution, (row, 0))) != set("123456789"):
+            return False
+    for col in range(len(solution)):
+        if set(get_col(solution, (0, col))) != set("123456789"):
+            return False
+    for row in (0, 3, 6):
+        for col in (0, 3, 6):
+            if set(get_block(solution, (row, col))) != set("123456789"):
+                return False
+    return True
 
 
 def generate_sudoku(N: int) -> tp.List[tp.List[str]]:
@@ -148,7 +190,18 @@ def generate_sudoku(N: int) -> tp.List[tp.List[str]]:
     >>> check_solution(solution)
     True
     """
-    pass
+    if N > 9 * 9:
+        N = 9 * 9
+    new_grid = solve([["." for _ in range(9)] for _ in range(9)])
+    deleted_values = 0
+    while N + deleted_values < 81:
+        random_col = random.randint(0, 8)
+        random_row = random.randint(0, 8)
+        if new_grid is not None:
+            if new_grid[random_col][random_row] != ".":
+                new_grid[random_col][random_row] = "."
+                deleted_values += 1
+    return new_grid  # type: ignore
 
 
 if __name__ == "__main__":
@@ -160,3 +213,25 @@ if __name__ == "__main__":
             print(f"Puzzle {fname} can't be solved")
         else:
             display(solution)
+
+if __name__ == "__main__":
+    for filename in ("puzzle1.txt", "puzzle2.txt", "puzzle3.txt"):
+        grid = read_sudoku(filename)
+        start = time.time()
+        solve(grid)
+        end = time.time()
+        print(f"{filename}: {end - start}")
+
+
+def run_solve(filename: str) -> None:
+    grid = read_sudoku(filename)
+    start = time.time()
+    solve(grid)
+    end = time.time()
+    print(f"{filename}: {end - start}")
+
+
+if __name__ == "__main__":
+    for filename in ("puzzle1.txt", "puzzle2.txt", "puzzle3.txt"):
+        p = multiprocessing.Process(target=run_solve, args=(filename,))
+        p.start()
