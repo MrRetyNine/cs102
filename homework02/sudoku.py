@@ -40,11 +40,7 @@ def group(values: tp.List[T], n: int) -> tp.List[tp.List[T]]:
     >>> group([1,2,3,4,5,6,7,8,9], 3)
     [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
     """
-    result = []
-    for val in range(0, len(values) - 1, n):
-        result.append(values[val : val + n])
-    return result
-    pass
+    return [values[val : (val + n)] for val in range(0, len(values), n)]
 
 
 def get_row(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -> tp.List[str]:
@@ -68,10 +64,7 @@ def get_col(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -> tp.List[str
     >>> get_col([['1', '2', '3'], ['4', '5', '6'], ['.', '8', '9']], (0, 2))
     ['3', '6', '9']
     """
-    result = []
-    for column in grid:
-        result.append(column[pos[1]])
-    return result
+    return [col[pos[1]] for col in grid]
 
 
 def get_block(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -> tp.List[str]:
@@ -84,11 +77,11 @@ def get_block(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -> tp.List[s
     >>> get_block(grid, (8, 8))
     ['2', '8', '.', '.', '.', '5', '.', '7', '9']
     """
-    block_values = []
-    for column in range((pos[0] // 3) * 3, (pos[0] // 3) * 3 + 3):
-        for row in range((pos[1] // 3) * 3, (pos[1] // 3) * 3 + 3):
-            block_values.append(grid[column][row])
-    return block_values
+    return [
+        grid[column][row]
+        for column in range((pos[0] // 3) * 3, (pos[0] // 3) * 3 + 3)
+        for row in range((pos[1] // 3) * 3, (pos[1] // 3) * 3 + 3)
+    ]
 
 
 def find_empty_positions(grid: tp.List[tp.List[str]]) -> tp.Optional[tp.Tuple[int, int]]:
@@ -100,10 +93,10 @@ def find_empty_positions(grid: tp.List[tp.List[str]]) -> tp.Optional[tp.Tuple[in
     >>> find_empty_positions([['1', '2', '3'], ['4', '5', '6'], ['.', '8', '9']])
     (2, 0)
     """
-    for row in range(len(grid)):
-        for column in grid[row]:
-            if column == ".":
-                return row, grid[row].index(column)
+    for y, col in enumerate(grid):
+        for x, pos in enumerate(col):
+            if pos == ".":
+                return y, x
     return None
 
 
@@ -117,11 +110,7 @@ def find_possible_values(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -
     >>> values == {'2', '5', '9'}
     True
     """
-    static_set = set("123456789")
-    row_set = set(get_row(grid, pos))
-    col_set = set(get_col(grid, pos))
-    block_set = set(get_block(grid, pos))
-    return static_set - row_set - block_set - col_set
+    return set("123456789") - set(get_row(grid, pos) + get_col(grid, pos) + get_block(grid, pos))
 
 
 def solve(grid: tp.List[tp.List[str]]) -> tp.Optional[tp.List[tp.List[str]]]:
@@ -209,25 +198,3 @@ if __name__ == "__main__":
             print(f"Puzzle {fname} can't be solved")
         else:
             display(solution)
-
-if __name__ == "__main__":
-    for filename in ("puzzle1.txt", "puzzle2.txt", "puzzle3.txt"):
-        grid = read_sudoku(filename)
-        start = time.time()
-        solve(grid)
-        end = time.time()
-        print(f"{filename}: {end - start}")
-
-
-def run_solve(filename: str) -> None:
-    grid = read_sudoku(filename)
-    start = time.time()
-    solve(grid)
-    end = time.time()
-    print(f"{filename}: {end - start}")
-
-
-if __name__ == "__main__":
-    for filename in ("puzzle1.txt", "puzzle2.txt", "puzzle3.txt"):
-        p = multiprocessing.Process(target=run_solve, args=(filename,))
-        p.start()
