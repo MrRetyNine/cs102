@@ -1,4 +1,3 @@
-import copy
 
 import pygame
 from pygame.locals import *
@@ -53,9 +52,7 @@ class GUI(UI):
                 x = w * self.cell_size
 
                 color = white if grid[h][w] == 0 else green
-                pygame.draw.rect(
-                    self.screen, color, [x + 1, y + 1, self.cell_size - 1, self.cell_size - 1]
-                )
+                pygame.draw.rect(self.screen, color, [x + 1, y + 1, self.cell_size - 1, self.cell_size - 1])
 
     def run(self) -> None:
         # Copy from previous assignment
