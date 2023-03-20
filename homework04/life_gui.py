@@ -5,7 +5,6 @@ from ui import UI
 
 class GUI(UI):
     def __init__(self, life: GameOfLife, cell_size: int = 10, speed: int = 10) -> None:
-        
         self.width = life.cols * cell_size
         self.height = life.rows * cell_size
         self.cell_size = cell_size
