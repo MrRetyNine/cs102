@@ -24,7 +24,7 @@ class GameOfLife:
         self.prev_generation = self.create_grid()
         # Текущее поколение клеток
         self.curr_generation = self.create_grid(randomize=randomize)
-        # Максимальное число поколений
+        # Максимальное число поколения
         self.max_generations = max_generations
         # Текущее число поколений
         self.generations = 1
