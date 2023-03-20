@@ -30,11 +30,11 @@ class Console(UI):
             for row in range(self.life.rows):
                 for col in range(self.life.cols):
                     screen.addstr(row + 1, col + 1, "*" if grid[row][col] else " ")
-        except curses.error: # type: ignore
+        except curses.error:  # type: ignore
             pass
 
     def run(self) -> None:
-        screen = curses.initscr() # type: ignore
+        screen = curses.initscr()  # type: ignore
 
         running = True
         while (self.life.is_changing or not self.life.is_max_generations_exceeded) and running:
@@ -52,7 +52,7 @@ class Console(UI):
             except KeyboardInterrupt:
                 running = False
 
-        curses.endwin() # type: ignore
+        curses.endwin()  # type: ignore
 
 
 if __name__ == "__main__":
