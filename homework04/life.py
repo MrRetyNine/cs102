@@ -13,10 +13,10 @@ Grid = tp.List[Cells]
 
 class GameOfLife:
     def __init__(
-        self,
-        size: tp.Tuple[int, int],
-        randomize: bool = True,
-        max_generations: tp.Optional[float] = float("inf"),
+            self,
+            size: tp.Tuple[int, int],
+            randomize: bool = True,
+            max_generations: tp.Optional[float] = float("inf"),
     ) -> None:
         # Размер клеточного поля
         self.rows, self.cols = size
@@ -82,7 +82,10 @@ class GameOfLife:
         """
         Не превысило ли текущее число поколений максимально допустимое.
         """
-        return self.generations >= self.max_generations
+        if self.generations > self.max_generations:  # type: ignore
+            return False
+        else:
+            return True
 
     @property
     def is_changing(self) -> bool:
