@@ -35,27 +35,29 @@ class Console(UI):
 
     def run(self) -> None:
         screen = curses.initscr()  # type: ignore
-
+        curses.cbreak()
+        screen.keypad(True)
+        screen.nodelay(True)  # установка неблокирующего режима чтения клавиш с клавиатуры
+        paused = False
         running = True
         while (self.life.is_changing or not self.life.is_max_generations_exceeded) and running:
-            try:
-                screen.clear()
-
-                self.draw_borders(screen)
-                self.draw_grid(screen)
-
+            screen.clear()
+            if not paused:
                 self.life.step()
-
-                screen.refresh()
-                time.sleep(0.5)
-
-            except KeyboardInterrupt:
+            self.draw_borders(screen)
+            self.draw_grid(screen)
+            screen.refresh()
+            time.sleep(0.5)
+            c = screen.getch()
+            if c == 32:  # spacebar
+                paused = not paused
+            if c == 27:  # Escape
                 running = False
 
         curses.endwin()  # type: ignore
 
 
 if __name__ == "__main__":
-    life = GameOfLife((24, 80), max_generations=50)
+    life = GameOfLife((24, 80), max_generations=1)
     ui = Console(life)
     ui.run()
