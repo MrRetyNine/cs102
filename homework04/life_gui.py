@@ -58,7 +58,7 @@ class GUI(UI):
         pause = True
 
         running = True
-        while self.life.is_changing and not self.life.is_max_generations_exceeded and running:
+        while self.life.is_changing and running:
             try:
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
@@ -74,6 +74,8 @@ class GUI(UI):
 
                     elif event.type == pygame.KEYUP and event.key == pygame.K_ESCAPE:
                         running = False
+                    elif self.life.is_max_generations_exceeded:
+                        pause = True
 
                 self.draw_lines()
 
@@ -86,14 +88,15 @@ class GUI(UI):
                 pygame.display.update()
                 pygame.display.flip()
                 clock.tick(self.speed)
-
+                if self.life.is_max_generations_exceeded:
+                    pause = True
             except KeyboardInterrupt:
                 running = False
         pygame.quit()
 
 
 if __name__ == "__main__":
-    life = GameOfLife(size=(48, 64), max_generations=10)
+    life = GameOfLife(size=(48, 64), max_generations=3)
 
     ui = GUI(life)
     ui.run()
