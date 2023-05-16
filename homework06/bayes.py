@@ -60,7 +60,7 @@ class NaiveBayesClassifier:
 
     def score(self, X_test, y_test):
         """Returns the mean accuracy on the given test data and labels."""
-        # X_test: Данные, которые проверяем
+        # X_test: Данные, мы которые проверяем
         # y_test: Классы, которым должны принадлежать Проверяемые Данные
         score = 0
         y = self.predict(X_test)
