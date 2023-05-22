@@ -1,13 +1,15 @@
 import json
-import re
+import urllib.error
+import urllib.request
 from datetime import datetime, timedelta
 from time import sleep
 
-import config
 import gspread  # type: ignore
 import pandas as pd  # type: ignore
 import telebot  # type: ignore
 import validators  # type: ignore
+
+import config
 
 bot = telebot.TeleBot(config.token)
 ROW, COL = None, None
@@ -21,41 +23,31 @@ def is_valid_date(date: str, divider: str = "/") -> bool:
     - может быть сегодняшним числом
     - пользователь не должен быть обязан вводить конкретный формат даты
     (например, только через точку или только через слеш)"""
+    if divider not in date or date.count(divider) != 2:
+        return False
+
+    date = date.replace(divider, "/")
     try:
-        date_format = "%d{}%m{}%y".format(divider, divider)
-        date_obj = datetime.strptime(date, date_format)
-
-        current_date = datetime.now().date()
-        if date_obj.date() < current_date:
-            return False
-
-        one_year_from_now = current_date + timedelta(days=365)
-        if date_obj.date() > one_year_from_now:
-            return False
-
-        if not (1900 <= date_obj.year <= 2100):
-            return False
-
-        return True
-
+        input_date = convert_date(date).date()
     except ValueError:
         return False
+
+    current_date = datetime.today().date()
+    future_date = current_date.replace(year=current_date.year + 1)
+
+    return current_date <= input_date <= future_date
 
 
 def is_valid_url(url: str = "") -> bool:
     """Проверяем, что ссылка рабочая"""
-    regex = r"^(https?://|www\.)\S*\.ru$"
-    if re.match(regex, url):
-        return True
-
-    regex = r"^\S*\.ru$"
-    if re.match(regex, url):
-        return True
-
-    regex = r"^en\S*\.[a-z]+\.[a-z]{2,3}$"
-    if re.match(regex, url):
-        return False
-
+    if not url.startswith("http://") and not url.startswith("https://"):
+        url = "http://" + url
+    try:
+        request = urllib.request.urlopen(url)
+        if request.getcode() == 200:
+            return True
+    except (ValueError, urllib.error.URLError):
+        pass
     return False
 
 
