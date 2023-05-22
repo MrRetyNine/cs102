@@ -4,12 +4,11 @@ import urllib.request
 from datetime import datetime, timedelta
 from time import sleep
 
+import config
 import gspread  # type: ignore
 import pandas as pd  # type: ignore
 import telebot  # type: ignore
 import validators  # type: ignore
-
-import config
 
 bot = telebot.TeleBot(config.token)
 ROW, COL = None, None
