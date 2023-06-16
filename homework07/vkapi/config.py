@@ -1,7 +1,7 @@
 # https://hackernoon.com/4-ways-to-manage-the-configuration-in-python-4623049e841b
 import os.path
 
-from dotenv import load_dotenv
+from dotenv import load_dotenv  # type: ignore
 
 path = os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")), ".env")
 if os.path.exists(path):
